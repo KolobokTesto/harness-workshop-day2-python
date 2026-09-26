@@ -1,6 +1,7 @@
 import json
 
 from src.claude_model import ClaudeModel, tool_result_message
+from src.settings import is_owner
 from src.tools import SYSTEM, run_tool, tool_specs
 
 MAX_STEPS = 8
@@ -15,7 +16,7 @@ def ask_agent(chat_id, text, model=None):
     model = model or ClaudeModel()
     history = conversations.setdefault(chat_id, [])
     history.append({"role": "user", "content": text})
-    include_delete = False
+    include_delete = is_owner(chat_id)
     for _step in range(MAX_STEPS):
         tools = tool_specs(include_delete)
         reply = model.generate(system=SYSTEM, messages=history, tools=tools)

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-from src.notes import MAX_NOTE_CHARACTERS, save_note, search_notes
+from src.notes import MAX_NOTE_CHARACTERS, delete_notes, save_note, search_notes
 
 SYSTEM = "\n".join(
     [
