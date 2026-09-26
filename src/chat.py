@@ -1,6 +1,7 @@
 import json
 
 from src.claude_model import ClaudeModel, tool_result_message
+from src.log import log_response
 from src.settings import is_owner
 from src.tools import SYSTEM, run_tool, tool_specs
 
@@ -24,6 +25,7 @@ def ask_agent(chat_id, text, model=None):
             if not reply["text"].strip():
                 raise RuntimeError("Модель не повернула текст.")
             history.append({"role": "assistant", "content": reply["content"] or reply["text"]})
+            log_response({"toolCalls": [], "usage": {"totalTokens": reply["totalTokens"]}})
             return reply["text"]
         history.append({"role": "assistant", "content": reply["content"]})
         pairs = []
@@ -36,4 +38,5 @@ def ask_agent(chat_id, text, model=None):
             pairs.append((call, result))
             logged.append({"tool": call["name"], "isError": bool(result.get("isError"))})
         history.append(tool_result_message(pairs))
+        log_response({"toolCalls": logged, "usage": {"totalTokens": reply["totalTokens"]}})
     raise RuntimeError("Досягли ліміту кроків.")
